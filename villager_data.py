@@ -52,6 +52,8 @@ def all_names_by_hobby(filename):
     
     # One-liner solution
     # return [[hobby] + [line[0] for line in data if line[3] == hobby] for hobby in hobbies]
+    #
+    # (We decided to add the hobby name to the beginning of each list!)
 
 
 def all_data(filename):
