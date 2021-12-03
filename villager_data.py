@@ -11,12 +11,8 @@ def all_species(filename):
       - set[str]: a set of strings
     """
     with open(filename) as file:
-      data = file.readlines()
-      species = set()
-      for line in data:
-        line = line.split("|")
-        species.add(line[1])
-
+      data = [line.split("|") for line in file.readlines()]
+      species = {line[1] for line in data}
     return species
 
 
@@ -30,14 +26,9 @@ def get_villagers_by_species(filename, species="All"):
     Return:
       - list[list]: a list of lists
     """
-    # TODO: turn into list comprehension
     with open(filename) as file:
-      data = file.readlines()
-      villagers = []
-      for line in data:
-        line = line.split('|') 
-        if species == "All" or line[1] == species:
-          villagers.append(line[0])
+      data = [line.split("|") for line in file.readlines()]
+      villagers = [line[0] for line in data if line[1] == species or species == 'All']
     return sorted(villagers)
 
 
@@ -51,17 +42,16 @@ def all_names_by_hobby(filename):
       - list[list]: a list of lists
     """
     hobbies = ["Fitness", "Nature", "Education", "Music", "Fashion", "Play"]
-    groups = []
     with open(filename) as file:
-      data = file.readlines()
+      groups = []
+      data = [line.split("|") for line in file.readlines()]
       for hobby in hobbies:
-        names = []
-        for line in data:
-          line = line.split("|")
-          if line[3] == hobby:
-            names.append(line[0])
-        groups.append(names)       
+        names = [hobby] + [line[0] for line in data if line[3] == hobby]
+        groups.append(names)
     return groups
+    
+    # One-liner solution
+    # return [[hobby] + [line[0] for line in data if line[3] == hobby] for hobby in hobbies]
 
 
 def all_data(filename):
@@ -77,9 +67,8 @@ def all_data(filename):
       - list[tuple]: a list of tuples
     """
     with open(filename) as file:
-      data = file.readlines()
-      entries = [tuple(line.strip().split("|")) for line in data]   
-    return entries
+      data = [line.strip().split("|") for line in file.readlines()]
+      return [tuple(line) for line in data]
 
 
 def find_motto(filename, name):
@@ -96,10 +85,8 @@ def find_motto(filename, name):
       - str: the person's cohort or None
     """
     with open(filename) as file:
-      data = file.readlines()
-
+      data = [line.strip().split("|") for line in file.readlines()]
       for line in data:
-        line = line.strip().split("|")
         if line[0] == name:
           return line[4]
 
@@ -107,30 +94,22 @@ def find_motto(filename, name):
 def find_likeminded_villagers(filename, name):
     """Return a set of villagers with the same personality as the given villager."""
     with open(filename) as file:
-      data = file.readlines()
-
+      data = [line.strip().split("|") for line in file.readlines()]
       for line in data:
-        line = line.strip().split("|")
         if line[0] == name:
           personality = line[2]
           break
-
-      group = set()
-      for line in data:
-        line = line.strip().split("|")
-        if line[2] == personality:
-          group.add(line[0])
-    return group
+    return {line[0] for line in data if line[2] == personality}
 
 
 # PASSED: TEST 1 
 # print(all_species('villagers.csv'))
+
 # PASSED: TEST 2 
 # print(get_villagers_by_species('villagers.csv', species="Monkey"))
 # print(get_villagers_by_species('villagers.csv', species="All"))
 
 # PASSED: TEST 3
-#print()
 # print(all_names_by_hobby('villagers.csv'))
 
 # PASSED: TEST 4
@@ -140,6 +119,6 @@ def find_likeminded_villagers(filename, name):
 # print(find_motto('villagers.csv', "Anchovy"))
 # print(find_motto('villagers.csv', "aisdfoashd"))
 
-# PASSED:
+# PASSED TEST 6:
 # print(find_likeminded_villagers('villagers.csv', 'Poppy'))
 # print(find_likeminded_villagers('villagers.csv', 'Midge'))
